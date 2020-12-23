@@ -19,5 +19,8 @@ object Utils {
     def +(p: (A, B)): (A, B) = (p._1 + t._1, p._2 + t._2)
   }
 
+  def ceilDiv(x: Int, y: Int): Int = {
+    (x + y - 1) / y
+  }
 
 }

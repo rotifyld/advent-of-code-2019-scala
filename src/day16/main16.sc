@@ -1,0 +1,39 @@
+def ceilDiv(x: Int, y: Int): Int = {
+  (x + y - 1) / y
+}
+
+val in = "59762677844514231707968927042008409969419694517232887554478298452757853493727797530143429199414189647594938168529426160403829916419900898120019486915163598950118118387983556244981478390010010743564233546700525501778401179747909200321695327752871489034092824259484940223162317182126390835917821347817200000199661513570119976546997597685636902767647085231978254788567397815205001371476581059051537484714721063777591837624734411735276719972310946108792993253386343825492200871313132544437143522345753202438698221420628103468831032567529341170616724533679890049900700498413379538865945324121019550366835772552195421407346881595591791012185841146868209045"
+val in = "03036732577212944063491565474664"
+
+val signal1 = in.toCharArray.map(_ - '0').toSeq
+
+val basePattern = Seq(0, 1, 0, -1)
+
+def patterns(length: Int)(idx: Int): Seq[Int] = {
+  (1 to length).map { i =>
+    val repetitions = ceilDiv(length + 1, i * basePattern.length)
+    (for {
+      _ <- 0 until repetitions
+      num <- basePattern
+      x <- Seq.fill(i)(num)
+    } yield x).tail
+  }(idx)
+}
+
+def phase(signal: Seq[Int]): Seq[Int] = {
+  signal.indices.map { i =>
+    (signal zip patterns(signal.length)(i)).foldLeft(0) {
+      case (acc, (j, p)) => acc + (j * p)
+    }.abs % 10
+  }
+}
+
+val fft = Function.chain(List.fill(100)(phase _))
+
+//val taskOne = fft(signal1).take(8).mkString
+
+
+val signal2 = (in * 1000).toCharArray.map(_ - '0').toSeq
+val offset = signal2.take(7).mkString.toInt
+
+val taskTwo = fft(signal2).slice(offset, offset + 8)
